@@ -1,0 +1,16 @@
+[38;5;2m[i 0521 08:31:27.387656 16 compiler.py:956] Jittor(1.3.9.14) src: /work/apps/miniconda3/envs/jittor_comp_human/lib/python3.9/site-packages/jittor[m
+[38;5;2m[i 0521 08:31:27.390322 16 compiler.py:957] g++ at /work/apps/miniconda3/envs/jittor_comp_human/bin/g++(10.4.0)[m
+[38;5;2m[i 0521 08:31:27.390378 16 compiler.py:958] cache_path: /work/home/s2023010792/.cache/jittor/jt1.3.9/g++10.4.0/py3.9.21/Linux-5.15.0-1x6a/IntelRXeonRPlaxda/c369/default[m
+[38;5;2m[i 0521 08:31:27.393987 16 __init__.py:412] Found /usr/local/cuda/bin/nvcc(12.2.140) at /usr/local/cuda/bin/nvcc.[m
+[38;5;2m[i 0521 08:31:27.396800 16 __init__.py:412] Found addr2line(2.38) at /usr/bin/addr2line.[m
+[38;5;1m[e 0521 08:31:27.479636 16 compiler.py:1006] No GPU Device Found![m
+[38;5;2m[i 0521 08:31:27.479757 16 compiler.py:1013] cuda key:cu12.2.140_sm_[m
+[38;5;2m[i 0521 08:31:27.501176 16 compiler.py:34] Create cache dir: /work/home/s2023010792/.cache/jittor/jt1.3.9/g++10.4.0/py3.9.21/Linux-5.15.0-1x6a/IntelRXeonRPlaxda/c369/default/cu12.2.140_sm_[m
+[38;5;2m[i 0521 08:31:27.502223 16 compiler.py:34] Create cache dir: /work/home/s2023010792/.cache/jittor/jt1.3.9/g++10.4.0/py3.9.21/Linux-5.15.0-1x6a/IntelRXeonRPlaxda/c369/default/cu12.2.140_sm_/jit[m
+[38;5;2m[i 0521 08:31:27.502453 16 compiler.py:34] Create cache dir: /work/home/s2023010792/.cache/jittor/jt1.3.9/g++10.4.0/py3.9.21/Linux-5.15.0-1x6a/IntelRXeonRPlaxda/c369/default/cu12.2.140_sm_/obj_files[m
+[38;5;2m[i 0521 08:31:27.502643 16 compiler.py:34] Create cache dir: /work/home/s2023010792/.cache/jittor/jt1.3.9/g++10.4.0/py3.9.21/Linux-5.15.0-1x6a/IntelRXeonRPlaxda/c369/default/cu12.2.140_sm_/gen[m
+[38;5;2m[i 0521 08:31:27.502840 16 compiler.py:34] Create cache dir: /work/home/s2023010792/.cache/jittor/jt1.3.9/g++10.4.0/py3.9.21/Linux-5.15.0-1x6a/IntelRXeonRPlaxda/c369/default/cu12.2.140_sm_/tmp[m
+[38;5;2m[i 0521 08:31:27.503015 16 compiler.py:34] Create cache dir: /work/home/s2023010792/.cache/jittor/jt1.3.9/g++10.4.0/py3.9.21/Linux-5.15.0-1x6a/IntelRXeonRPlaxda/c369/default/cu12.2.140_sm_/checkpoints[m
+[38;5;2m[i 0521 08:31:34.200130 16 __init__.py:227] Total mem: 503.67GB, using 16 procs for compiling.[m
+[38;5;2m[i 0521 08:35:10.524443 16 jit_compiler.cc:28] Load cc_path: /work/apps/miniconda3/envs/jittor_comp_human/bin/g++[m
+/var/spool/slurmd/job02267/slurm_script: line 16: 252224 Aborted                 (core dumped) python3 -m jittor.test.test_example

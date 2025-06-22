@@ -3,6 +3,8 @@ from jittor import nn
 from jittor import init
 from jittor.contrib import concat
 import numpy as np
+# 如果要引入ptv3
+#from .serialized_attention import SerializedAttention
 from PCT.misc.ops import FurthestPointSampler
 from PCT.misc.ops import knn_point, index_points
 
@@ -97,6 +99,12 @@ class Point_Transformer(nn.Module):
         self.sa2 = SA_Layer(128)
         self.sa3 = SA_Layer(128)
         self.sa4 = SA_Layer(128)
+        
+        ##如果要引入pctv3,把前面四行改为
+        # self.sa1 = SerializedAttention(128)
+        # self.sa2 = SerializedAttention(128)
+        # self.sa3 = SerializedAttention(128)
+        # self.sa4 = SerializedAttention(128)
 
         self.conv_fuse = nn.Sequential(nn.Conv1d(512, 1024, kernel_size=1, bias=False),
                                    nn.BatchNorm1d(1024),
@@ -131,6 +139,20 @@ class Point_Transformer(nn.Module):
         
         # Concatenate features from all SA layers
         x = concat((x1, x2, x3, x4), dim=1)
+        
+        ##如果用ptv3的serialized attn 
+        x = x.permute(0, 2, 1)  # [B, N, 128]
+        
+        # 应用SerializedAttention
+        # x1 = self.sa1(x, xyz)
+        # x2 = self.sa2(x1, xyz)
+        # x3 = self.sa3(x2, xyz)
+        # x4 = self.sa4(x3, xyz)
+        
+        # # 转回[B, C, N]格式
+        # x = concat([x1, x2, x3, x4], dim=2).permute(0, 2, 1)
+        
+        # # ... 保持后续处理不变 ...
 
         x = self.conv_fuse(x)
         # x = F.adaptive_max_pool1d(x, 1).view(batch_size, -1)
@@ -147,7 +169,7 @@ class Point_Transformer_Last(nn.Module):
     def __init__(self, channels=256):
         super(Point_Transformer_Last, self).__init__()
         self.conv1 = nn.Conv1d(channels, channels, kernel_size=1, bias=False)
-        self.conv_pos = nn.Conv1d(3, channels, kernel_size=1, bias=False)
+        self.pos_xyz = nn.Conv1d(3, channels, kernel_size=1, bias=False)
 
         self.bn1 = nn.BatchNorm1d(channels)
 
@@ -166,7 +188,7 @@ class Point_Transformer_Last(nn.Module):
         batch_size, _, N = x.size()
         # add position embedding
         xyz = xyz.permute(0, 2, 1)
-        xyz = self.pos_xyz(xyz)
+        # xyz = self.pos_xyz(xyz)
         # end
         x = self.relu(self.bn1(self.conv1(x))) # B, D, N
 
@@ -214,11 +236,12 @@ class SA_Layer(nn.Module):
         self.act = nn.ReLU()
         self.softmax = nn.Softmax(dim=-1)
         # Add a projection for xyz coordinates
-        self.xyz_proj = nn.Conv1d(3, channels, 1, bias=False)
+        self.xyz_proj = nn.Conv1d(9, channels, 1, bias=False)
 
     def execute(self, x, xyz):
         # Project xyz to the same channel dimension as x
-        xyz_feat = self.xyz_proj(xyz)
+        pos_enc = jt.concat([xyz, jt.sin(xyz), jt.cos(xyz)], dim=1)
+        xyz_feat = self.xyz_proj(pos_enc)
         
         # Now we can safely add them
         x = x + xyz_feat
@@ -227,8 +250,9 @@ class SA_Layer(nn.Module):
         x_k = self.k_conv(x)# b, c, n        
         x_v = self.v_conv(x)
         energy = nn.bmm(x_q, x_k) # b, n, n 
-        attention = self.softmax(energy)
-        attention = attention / (1e-9 + attention.sum(dim=1, keepdims=True))
+        # attention = self.softmax(energy)
+        # attention = attention / (1e-9 + attention.sum(dim=1, keepdims=True))
+        attention = self.softmax(energy / jt.sqrt(x_q.shape[-1]))
         x_r = nn.bmm(x_v, attention) # b, c, n 
         x_r = self.act(self.after_norm(self.trans_conv(x - x_r)))
         x = x + x_r
